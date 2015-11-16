@@ -21,9 +21,9 @@ class magic_art_game:
 				'magic_channel_name': os.environ['magic_channel_name'],
 				'magic_bot_name': os.environ['magic_bot_name'],
 				'magic_bot_icon': os.environ['magic_bot_icon'],
-				'cards_in_game': os.environ['cards_in_game'],
-				'time_for_answers': os.environ['time_for_answers'],
-				'time_between_cards': os.environ['time_between_cards']
+				'cards_in_game': int(os.environ['cards_in_game']),
+				'time_for_answers': int(os.environ['time_for_answers']),
+				'time_between_cards': int(os.environ['time_between_cards'])
 			}
 		self._set_difficulty(difficulty)
 		self.magic_bot = slack_bot(self.settings['magic_channel_url'], self.settings['magic_channel_name'], self.settings['magic_bot_name'], self.settings['magic_bot_icon'], live)

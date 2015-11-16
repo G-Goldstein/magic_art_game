@@ -3,6 +3,7 @@ import re
 import json
 import time
 import sys
+import os
 from post import slack_bot
 
 valid_difficulties = ['standard', 'easy', 'normal', 'hard', 'impossible']

@@ -24,6 +24,7 @@ class magic_art_game:
 				'cards_in_game': int(os.environ['cards_in_game']),
 				'time_for_answers': int(os.environ['time_for_answers']),
 				'time_between_cards': int(os.environ['time_between_cards'])
+				'alert': (os.environ['alert'] == "True")
 			}
 		self._set_difficulty(difficulty)
 		self.magic_bot = slack_bot(self.settings['magic_channel_url'], self.settings['magic_channel_name'], self.settings['magic_bot_name'], self.settings['magic_bot_icon'], live)
@@ -89,7 +90,11 @@ class magic_art_game:
 		return True
 
 	def start_the_game(self):
-		self.magic_bot.post_message('Starting {!s} {!s} magic art games in this <!channel> with {!s} seconds for answers'.format(self.settings['cards_in_game'], self.settings['difficulty'], self.settings['time_for_answers']))
+		if self.settings['alert']:
+			channel = '<!channel>'
+		else:
+			channel = 'channel'
+		self.magic_bot.post_message('Starting {!s} {!s} magic art games in this {!s} with {!s} seconds for answers'.format(self.settings['cards_in_game'], self.settings['difficulty'], channel, self.settings['time_for_answers']))
 		for x in range(self.settings['cards_in_game']):
 			time.sleep(self.settings['time_between_cards'])
 			while not self.play_a_round():
@@ -98,7 +103,7 @@ class magic_art_game:
 
 def main():
 	try:
-		game = magic_art_game('magic_art_game.settings', sys.argv[1], sys.argv[2])
+		game = magic_art_game('magic_art_game.settings', sys.argv[1], sys.argv[2]=="True")
 	except:
 		try:
 			game = magic_art_game('magic_art_game.settings', sys.argv[1], live=False)

@@ -23,7 +23,7 @@ class magic_art_game:
 				'magic_bot_icon': os.environ['magic_bot_icon'],
 				'cards_in_game': int(os.environ['cards_in_game']),
 				'time_for_answers': int(os.environ['time_for_answers']),
-				'time_between_cards': int(os.environ['time_between_cards'])
+				'time_between_cards': int(os.environ['time_between_cards']),
 				'alert': (os.environ['alert'] == "True")
 			}
 		self._set_difficulty(difficulty)

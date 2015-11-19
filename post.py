@@ -46,7 +46,6 @@ class slack_bot:
 		else:
 			write_to_log(simulate_text)
 
-
 def write_to_log(message_text):
 	try:
 		log_directory = os.environ['OPENSHIFT_LOG_DIR']

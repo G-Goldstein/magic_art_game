@@ -38,8 +38,8 @@ def main(set):
 		try:
 			spoiled = []
 			new_spoilers = 0
-			spoiled_file = '{!s}\{!s}.spoiled'.format(data_directory, set)
-			post.write_to_log('Data file trying to write to: {!s}'.format(data_directory))
+			spoiled_file = '{!s}/{!s}.spoiled'.format(data_directory, set)
+			post.write_to_log('Data file trying to write to: {!s}'.format(spoiled_file))
 			try:
 				with open(spoiled_file) as file:
 					spoiled = json.loads(file.read())

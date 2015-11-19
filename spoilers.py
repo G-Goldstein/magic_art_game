@@ -30,6 +30,7 @@ def get_bot(live=False):
 def main(set):
 	slack_bot = get_bot(True)
 	gone_bad = False
+	post.write_to_log('Starting up...')
 	try:
 		data_directory = os.environ['OPENSHIFT_DATA_DIR']
 	except:

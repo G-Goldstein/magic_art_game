@@ -27,14 +27,14 @@ def get_bot(live=False):
 	bot = slack_bot(settings['magic_channel_url'], settings['magic_channel_name'], settings['magic_bot_name'], settings['magic_bot_icon'], live)
 	return bot
 
-def main(set):
-	slack_bot = get_bot(True)
+def main(set, outchannel, logging):
+	slack_bot = get_bot(outchannel=='slack')
 	gone_bad = False
-	post.write_to_log('Starting up...')
+	post.write_to_log('Starting up...', logging=="log")
 	try:
 		data_directory = os.environ['OPENSHIFT_DATA_DIR']
 	except:
-		data_directory = 'datablahblah'
+		data_directory = 'data'
 	while not gone_bad:
 		try:
 			spoiled = []
@@ -57,7 +57,7 @@ def main(set):
 						spoiled.append(spoiler)
 						new_spoilers += 1
 				if new_spoilers == 0:
-					post.write_to_log('No new spoilers right now')
+					post.write_to_log('No new spoilers right now', logging=="log")
 				try: 
 					with open(spoiled_file, 'w+') as file:
 						file.write(json.dumps(spoiled))
@@ -65,7 +65,7 @@ def main(set):
 					slack_bot.post_message('I have failed. Dying now.')
 					gone_bad = True
 		except:
-			post.write_to_log('No new spoilers right now')
+			post.write_to_log('Failed to get spoilers', logging=="log")
 		if not gone_bad:
 			time.sleep(300)
 
@@ -74,4 +74,12 @@ if __name__ == "__main__":
 		set = os.environ['new_magic_set']
 	except:
 		set = 'ogw'
-	main(set)
+	try:
+		outchannel = sys.argv[1]
+	except:
+		outchannel = 'console'
+	try:
+		logging = sys.argv[2]
+	except:
+		logging = 'console'
+	main(set, outchannel, logging)

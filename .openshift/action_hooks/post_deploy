@@ -1,2 +1,2 @@
 #!/bin/bash
-python -m spoilers
+python -m spoilers slack log

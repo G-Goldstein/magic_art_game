@@ -72,14 +72,10 @@ def main(set, outchannel, logging):
 if __name__ == "__main__":
 	try:
 		set = os.environ['new_magic_set']
+		outchannel = 'slack'
+		logging='log'
 	except:
 		set = 'ogw'
-	try:
-		outchannel = sys.argv[1]
-	except:
 		outchannel = 'console'
-	try:
-		logging = sys.argv[2]
-	except:
 		logging = 'console'
 	main(set, outchannel, logging)

@@ -31,7 +31,7 @@ def main(set):
 	slack_bot = get_bot(False)
 	gone_bad = False
 	try:
-		data_directory = os.environ['OPENSHIFT_DATA_DIR ']
+		data_directory = os.environ['OPENSHIFT_DATA_DIR']
 	except:
 		data_directory = 'datablahblah'
 	while not gone_bad:

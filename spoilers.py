@@ -33,7 +33,7 @@ def main(set):
 	try:
 		data_directory = os.environ['OPENSHIFT_DATA_DIR ']
 	except:
-		data_directory = 'data'
+		data_directory = 'datablahblah'
 	while not gone_bad:
 		try:
 			spoiled = []

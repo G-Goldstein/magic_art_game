@@ -60,5 +60,5 @@ target/
 magic_art_game.settings
 rpg_code_game.settings
 
-# Spoilers
-.spoiled
+/data
+/log

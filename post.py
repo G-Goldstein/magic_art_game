@@ -1,5 +1,6 @@
 import requests
 import json
+import os
 
 class slack_bot:
 
@@ -43,4 +44,14 @@ class slack_bot:
 		if self.live:
 			self.session.post(self.hook_url, data=payload)
 		else:
-			print(simulate_text)
+			write_to_log(simulate_text)
+
+
+def write_to_log(message_text):
+	try:
+		log_directory = os.environ['OPENSHIFT_LOG_DIR']
+	except:
+		log_directory = 'log'
+	log_file = '{!s}/log.txt'.format(log_directory)
+	with open(log_file, 'a+') as file:
+		file.write('{!s}\n'.format(message_text))

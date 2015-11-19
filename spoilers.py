@@ -28,7 +28,7 @@ def get_bot(live=False):
 	return bot
 
 def main(set):
-	slack_bot = get_bot(False)
+	slack_bot = get_bot(True)
 	gone_bad = False
 	try:
 		data_directory = os.environ['OPENSHIFT_DATA_DIR']
@@ -39,7 +39,6 @@ def main(set):
 			spoiled = []
 			new_spoilers = 0
 			spoiled_file = '{!s}/{!s}.spoiled'.format(data_directory, set)
-			post.write_to_log('Data file trying to write to: {!s}'.format(spoiled_file))
 			try:
 				with open(spoiled_file) as file:
 					spoiled = json.loads(file.read())

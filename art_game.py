@@ -8,6 +8,14 @@ from post import slack_bot
 
 valid_difficulties = ['standard', 'easy', 'normal', 'hard', 'impossible']
 
+difficulty_descriptions = {
+	'standard':'All cards from Standard (Type 2) legal editions',
+	'easy':'Rare cards from Core Sets',
+	'normal':'All cards from Core Sets',
+	'hard':'Rare cards from all sets',
+	'impossible':'All cards from all sets'
+}
+
 class magic_art_game:
 	def __init__(self, settings_file, difficulty='', live=False):
 		try:
@@ -24,7 +32,7 @@ class magic_art_game:
 				'cards_in_game': int(os.environ['cards_in_game']),
 				'time_for_answers': int(os.environ['time_for_answers']),
 				'time_between_cards': int(os.environ['time_between_cards']),
-				'alert': (os.environ['alert'] == "True")
+				'alert': os.environ['alert']
 			}
 		self._set_difficulty(difficulty)
 		self.magic_bot = slack_bot(self.settings['magic_channel_url'], self.settings['magic_channel_name'], self.settings['magic_bot_name'], self.settings['magic_bot_icon'], live)
@@ -90,11 +98,12 @@ class magic_art_game:
 		return True
 
 	def start_the_game(self):
-		if self.settings['alert']:
+		if self.settings['alert'] == "True":
 			channel = '<!channel>'
 		else:
 			channel = 'channel'
 		self.magic_bot.post_message('Starting {!s} {!s} magic art games in this {!s} with {!s} seconds for answers'.format(self.settings['cards_in_game'], self.settings['difficulty'], channel, self.settings['time_for_answers']))
+		self.magic_bot.post_message('{!s}: {!s}'.format(self.settings['difficulty'], difficulty_descriptions[self.settings['difficulty']]))
 		for x in range(self.settings['cards_in_game']):
 			time.sleep(self.settings['time_between_cards'])
 			while not self.play_a_round():
@@ -111,6 +120,10 @@ def main():
 			game = magic_art_game('magic_art_game.settings', live=False)
 	
 	game.start_the_game()
+
+def test():
+	game = magic_art_game('magic_art_game.settings', live=True)
+	game.magic_bot.post_message('Strtng 10 mpssbl mgc rt gms n ths chnnl wth 20 scnds fr nswrs m8')
 
 if __name__ == "__main__":
 	main()

@@ -30,6 +30,15 @@ class slack_bot:
 		payload = {'payload':json.dumps(message)}
 		self._send_or_simulate(payload, 'simulating post of image: {!s}'.format(image_url))
 
+	def post_multiline_message(self, message_text):
+		message = self.default_message.copy()
+		attachment = {
+		'text': message_text
+		}
+		message['attachments'] = [attachment]
+		payload = {'payload':json.dumps(message)}
+		self._send_or_simulate(payload, 'simulating post of multi-line message: {!s}'.format(message_text))
+
 	def _send_or_simulate(self, payload, simulate_text):
 		if self.live:
 			self.session.post(self.hook_url, data=payload)

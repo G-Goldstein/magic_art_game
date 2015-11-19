@@ -48,7 +48,7 @@ def main(set, outchannel, logging):
 			try:
 				spoilers = spoiler_page_html(set)
 			except:
-				post.write_to_log('Couldn\'t connect to {!s}'.format(spoiler_page(set)))
+				post.write_to_log('Couldn\'t connect to {!s}'.format(spoiler_page(set)), logging=="log")
 			else:
 				for spoiler in spoilers:
 					if spoiler not in spoiled:

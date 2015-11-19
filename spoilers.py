@@ -44,21 +44,25 @@ def main(set):
 					spoiled = json.loads(file.read())
 			except:
 				pass
-			spoilers = spoiler_page_html(set)
-			for spoiler in spoilers:
-				if spoiler not in spoiled:
-					image_url = '{!s}{!s}'.format(spoiler_page(set), spoiler)
-					slack_bot.post_image(image_url, 'New {!s} spoiler'.format(set))
-					spoiled.append(spoiler)
-					new_spoilers += 1
-			if new_spoilers == 0:
-				post.write_to_log('No new spoilers right now')
-			try: 
-				with open(spoiled_file, 'w+') as file:
-					file.write(json.dumps(spoiled))
+			try:
+				spoilers = spoiler_page_html(set)
 			except:
-				slack_bot.post_message('I have failed. Dying now.')
-				gone_bad = True
+				post.write_to_log('Couldn\'t connect to {!s}'.format(spoiler_page(set)))
+			else:
+				for spoiler in spoilers:
+					if spoiler not in spoiled:
+						image_url = '{!s}{!s}'.format(spoiler_page(set), spoiler)
+						slack_bot.post_image(image_url, 'New {!s} spoiler'.format(set))
+						spoiled.append(spoiler)
+						new_spoilers += 1
+				if new_spoilers == 0:
+					post.write_to_log('No new spoilers right now')
+				try: 
+					with open(spoiled_file, 'w+') as file:
+						file.write(json.dumps(spoiled))
+				except:
+					slack_bot.post_message('I have failed. Dying now.')
+					gone_bad = True
 		except:
 			post.write_to_log('No new spoilers right now')
 		if not gone_bad:

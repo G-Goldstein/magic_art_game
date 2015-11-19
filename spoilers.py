@@ -27,7 +27,7 @@ def get_bot(live=False):
 	return bot
 
 def main(set):
-	slack_bot = get_bot()
+	slack_bot = get_bot(True)
 	while True:
 		try:
 			spoiled = []

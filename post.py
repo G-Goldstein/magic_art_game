@@ -1,6 +1,7 @@
 import requests
 import json
 import os
+import datetime
 
 class slack_bot:
 
@@ -47,6 +48,8 @@ class slack_bot:
 			write_to_log(simulate_text)
 
 def write_to_log(message_text, log=True):
+	message_to_print = '{!s}   {!s}'.format(datetime.datetime.now(), message_text)
+	message_to_log = '{!s}\n'.format(message_to_print)
 	if log:
 		try:
 			log_directory = os.environ['OPENSHIFT_LOG_DIR']
@@ -54,6 +57,6 @@ def write_to_log(message_text, log=True):
 			log_directory = 'log'
 		log_file = '{!s}/log.txt'.format(log_directory)
 		with open(log_file, 'a+') as file:
-			file.write('{!s}\n'.format(message_text))
+			file.write(message_to_log)
 	else:
-		print(message_text)
+		print(message_to_log)

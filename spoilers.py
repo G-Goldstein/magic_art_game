@@ -28,7 +28,7 @@ def get_bot(live=False):
 	return bot
 
 def main(set):
-	slack_bot = get_bot(False)
+	slack_bot = get_bot(True)
 	gone_bad = False
 	post.write_to_log('Starting up...')
 	try:

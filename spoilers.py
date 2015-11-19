@@ -67,7 +67,7 @@ def main(set):
 		except:
 			post.write_to_log('No new spoilers right now')
 		if not gone_bad:
-			time.sleep(60)
+			time.sleep(300)
 
 if __name__ == "__main__":
 	try:

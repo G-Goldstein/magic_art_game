@@ -69,6 +69,40 @@ def main(set, outchannel, logging):
 		if not gone_bad:
 			time.sleep(300)
 
+def run_once(set, outchannel, logging):
+	slack_bot = get_bot(outchannel=='slack')
+	try:
+		data_directory = os.environ['OPENSHIFT_DATA_DIR']
+	except:
+		data_directory = 'data'
+	spoiled = []
+	new_spoilers = 0
+	spoiled_file = '{!s}/{!s}.spoiled'.format(data_directory, set)
+	try:
+		with open(spoiled_file) as file:
+			spoiled = json.loads(file.read())
+	except:
+		pass
+	try:
+		spoilers = spoiler_page_html(set)
+	except:
+		post.write_to_log('Couldn\'t connect to {!s}'.format(spoiler_page(set)), logging=="log")
+	else:
+		for spoiler in spoilers:
+			if spoiler not in spoiled:
+				image_url = '{!s}{!s}'.format(spoiler_page(set), spoiler)
+				slack_bot.post_image(image_url, 'New {!s} spoiler'.format(set))
+				spoiled.append(spoiler)
+				new_spoilers += 1
+		if new_spoilers == 0:
+			post.write_to_log('No new spoilers right now', logging=="log")
+		try: 
+			with open(spoiled_file, 'w+') as file:
+				file.write(json.dumps(spoiled))
+		except:
+			slack_bot.post_message('I have failed. Dying now.')
+			gone_bad = True
+
 if __name__ == "__main__":
 	try:
 		set = os.environ['new_magic_set']
@@ -78,4 +112,4 @@ if __name__ == "__main__":
 		set = 'ogw'
 		outchannel = 'console'
 		logging = 'console' 
-	main(set, outchannel, logging)
+	run_once(set, outchannel, logging)

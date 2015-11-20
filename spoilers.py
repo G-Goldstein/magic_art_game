@@ -77,5 +77,5 @@ if __name__ == "__main__":
 	except:
 		set = 'ogw'
 		outchannel = 'console'
-		logging = 'console'
+		logging = 'console' 
 	main(set, outchannel, logging)

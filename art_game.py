@@ -92,7 +92,7 @@ class magic_art_game:
 		except:
 			print('magiccards.info gave me a bad image. Skipping...')
 			return False
-		self.magic_bot.post_image(image_url, "Magic Art Game: {!s} difficulty".format(self.settings['difficulty']))
+		self.magic_bot.post_images([image_url], "Magic Art Game: {!s} difficulty".format(self.settings['difficulty']))
 		time.sleep(self.settings['time_for_answers'])
 		self.magic_bot.post_message(title_with_link)
 		return True

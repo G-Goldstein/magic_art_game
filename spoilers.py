@@ -76,6 +76,7 @@ def run_once(set, outchannel, logging):
 	except:
 		data_directory = 'data'
 	spoiled = []
+	spoilers_to_post = []
 	new_spoilers = 0
 	spoiled_file = '{!s}/{!s}.spoiled'.format(data_directory, set)
 	try:
@@ -91,10 +92,12 @@ def run_once(set, outchannel, logging):
 		for spoiler in spoilers:
 			if spoiler not in spoiled:
 				image_url = '{!s}{!s}'.format(spoiler_page(set), spoiler)
-				slack_bot.post_image(image_url, 'New {!s} spoiler'.format(set))
 				spoiled.append(spoiler)
+				spoilers_to_post.append(image_url)
 				new_spoilers += 1
-		if new_spoilers == 0:
+		if new_spoilers > 0:
+			slack_bot.post_images(spoilers_to_post, 'New {!s} spoiler'.format(set.upper()))
+		else:
 			post.write_to_log('No new spoilers right now', logging=="log")
 		try: 
 			with open(spoiled_file, 'w+') as file:

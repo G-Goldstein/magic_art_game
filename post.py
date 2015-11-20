@@ -21,16 +21,27 @@ class slack_bot:
 		payload = {'payload':json.dumps(message)}
 		self._send_or_simulate(payload, 'simulating post of message: {!s}'.format(message_text))
 
-	def post_image(self, image_url, pretext="", fallback="Couldn't display image"):
+	def post_images(self, image_urls_array, pretext="", fallback="Couldn't display image"):
+		if len(image_urls_array) == 0:
+			return
 		message = self.default_message.copy()
-		attachment = {
-		'image_url': image_url,
-		'pretext': pretext,
-		'fallback': fallback
-		}
+		message['attachments'] = []
+		attachment_count = 0
+		for image_url in image_urls_array:
+			if attachment_count == 0:
+				attachment = {
+				'image_url': image_url,
+				'pretext': pretext,
+				'fallback': fallback
+				}
+			else:
+				attachment = {
+				'image_url': image_url
+				}
+			message['attachments'].append(attachment)
 		message['attachments'] = [attachment]
 		payload = {'payload':json.dumps(message)}
-		self._send_or_simulate(payload, 'simulating post of image: {!s}'.format(image_url))
+		self._send_or_simulate(payload, 'simulating post of images: {!s}'.format(str(image_urls_array)))
 
 	def post_multiline_message(self, message_text):
 		message = self.default_message.copy()

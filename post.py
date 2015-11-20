@@ -39,6 +39,7 @@ class slack_bot:
 				'image_url': image_url
 				}
 			message['attachments'].append(attachment)
+			attachment_count += 1
 		message['attachments'] = [attachment]
 		payload = {'payload':json.dumps(message)}
 		self._send_or_simulate(payload, 'simulating post of images: {!s}'.format(str(image_urls_array)))

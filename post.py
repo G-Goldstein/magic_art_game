@@ -36,7 +36,8 @@ class slack_bot:
 				}
 			else:
 				attachment = {
-				'image_url': image_url
+				'image_url': image_url,
+				'fallback': fallback
 				}
 			message['attachments'].append(attachment)
 			attachment_count += 1

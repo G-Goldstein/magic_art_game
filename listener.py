@@ -6,7 +6,7 @@ from post import write_to_log
 def main():
 	try:
 		HOST = os.environ['OPENSHIFT_PYTHON_IP']
-		PORT = os.environ['OPENSHIFT_PYTHON_PORT']
+		PORT = int(os.environ['OPENSHIFT_PYTHON_PORT'])
 		write_to_log('Attempting to listen on: {!s}:{!s}'.format(HOST, PORT))
 	except:
 		HOST = ''

@@ -98,7 +98,7 @@ class rpg_code_game:
 		self.slack_bot.post_message('Thanks for playing!')
 
 def main():
-	game = rpg_code_game('rpg_code_game.settings', False)
+	game = rpg_code_game('rpg_code_game.settings', True)
 	game.start_the_game()
 
 if __name__ == "__main__":

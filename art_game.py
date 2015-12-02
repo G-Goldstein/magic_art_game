@@ -1,9 +1,13 @@
 import urllib.request
+import urllib.parse
 import re
 import json
 import time
 import sys
 import os
+import random
+import regex
+import itertools
 from post import slack_bot
 
 valid_difficulties = ['standard', 'easy', 'normal', 'hard', 'impossible']
@@ -57,12 +61,6 @@ class magic_art_game:
 		img_url = self.img_url_from_html(str(page.read()))
 		return img_url
 
-	def get_card_title(self, image_url):
-		page_url = self.get_card_page_url(image_url)
-		page = urllib.request.urlopen(page_url)
-		title = re.search('(?<=<title>)[^<]*', page.read().decode('utf-8', 'ignore')).group(0)
-		return title
-
 	def get_card_name(self, image_url):
 		name = re.search('^.*(?=\s\()', get_card_title(image_url)).group(0)
 		return name
@@ -73,12 +71,7 @@ class magic_art_game:
 		page_url = 'http://magiccards.info/{!s}/en/{!s}.html'.format(edition, number)
 		return page_url
 
-	def is_this_an_image(self, image_url):
-		try:
-			page = urllib.request.urlopen(image_url)
-			return True
-		except:
-			return False
+	
 
 	def play_a_round(self):
 		image_url = self.random_magic_card()
@@ -110,6 +103,85 @@ class magic_art_game:
 				pass
 		self.magic_bot.post_message('Thanks for playing!')
 
+	def start_custom_game(self, filter):
+		if self.settings['alert'] == "True":
+			channel = '<!channel>'
+		else:
+			channel = 'channel'
+		self.magic_bot.post_message('Starting up to {!s} custom magic art games in this {!s} with {!s} seconds for answers'.format(self.settings['cards_in_game'], channel, self.settings['time_for_answers']))
+		#self.magic_bot.post_message('Starting up to {!s} impossible magic art games in this {!s} with {!s} seconds for answers'.format(self.settings['cards_in_game'], channel, self.settings['time_for_answers']))
+		#self.magic_bot.post_message('Custom filter: {!s}'.format(filter))
+		for card in itertools.islice(random_cards_with_art_from_filter(filter), 0, self.settings['cards_in_game']):
+			time.sleep(self.settings['time_between_cards'])
+			self.play_a_round_with_card(card)
+		self.magic_bot.post_message('Thanks for playing! The filter was: `{!s}`'.format(filter))
+
+	def play_a_round_with_card(self, card):
+		self.magic_bot.post_images([art_link_for_card(card)], "Magic Art Game: custom difficulty")
+		time.sleep(self.settings['time_for_answers'])
+		self.magic_bot.post_message(card_title_with_link(card))
+
+def card_set(card):
+	return regex.first_match_in_string(card, '^.*(?=/)')
+
+def card_set_number(card):
+	return regex.first_match_in_string(card, '(?<=/)\d*')
+
+def direct_link_to_card(card):
+	return 'http://magiccards.info/{!s}/en/{!s}.html'.format(card_set(card), card_set_number(card))
+
+def art_link_for_card(card):
+	return 'http://magiccards.info/crop/en/{!s}/{!s}.jpg'.format(card_set(card), card_set_number(card))
+
+def card_has_art(card):
+	try:
+		page = urllib.request.urlopen(art_link_for_card(card))
+		return True
+	except:
+		return False
+
+def card_title(card):
+	page = urllib.request.urlopen(direct_link_to_card(card))
+	title = re.search('(?<=<title>)[^<]*', page.read().decode('utf-8', 'ignore')).group(0)
+	return title
+
+def random_arrangement_of_numbers(numbers):
+	list_of_numbers = list(range(numbers))
+	random.shuffle(list_of_numbers)
+	return list_of_numbers
+
+def random_cards_from_filter(filter):
+	filter = 'l:en ({!s})'.format(filter)
+	parsed_filter = urllib.parse.quote_plus(filter)
+	url = 'http://magiccards.info/query?q={!s}&v=card&s=cname'.format(parsed_filter)
+	if regex.page_contains_regex(url, 'Your\squery\sdid\snot\smatch\sany\scards'):
+		raise StopIteration
+	try:
+		card_count = int(regex.first_match_from_page(url, '(?<=\s\s)\d*(?=\scards)'))
+	except:
+		card_count = 1
+	card_numbers_list = random_arrangement_of_numbers(card_count)
+	for number in card_numbers_list:
+		card_page_number = int(number / 20 + 1)
+		card_number_on_page = number % 20 + 1
+		list_url = 'http://magiccards.info/query?q={!s}&s=cname&v=card&p={!s}'.format(parsed_filter, str(card_page_number))
+		cards_on_page = regex.all_matches_from_page(list_url, '(?<=info/scans/en/)[^/]*/\d*')
+		yield cards_on_page[card_number_on_page - 1]
+
+def random_cards_with_art_from_filter(filter):
+	fails_in_a_row = 0
+	for card in random_cards_from_filter(filter):
+		if card_has_art(card):
+			fails_in_a_row = 0
+			yield card
+		else:
+			fails_in_a_row += 1
+			if fails_in_a_row >= 5:
+				raise StopIteration
+
+def card_title_with_link(card):
+	return '<{!s}|{!s}>'.format(direct_link_to_card(card), card_title(card))
+
 def main():
 	try:
 		game = magic_art_game('magic_art_game.settings', sys.argv[1], sys.argv[2]=="True")
@@ -122,8 +194,8 @@ def main():
 	game.start_the_game()
 
 def test():
-	game = magic_art_game('magic_art_game.settings', live=True)
-	game.magic_bot.post_message('Strtng 10 mpssbl mgc rt gms n ths chnnl wth 20 scnds fr nswrs m8')
+	game = magic_art_game('magic_art_game.settings', live=(sys.argv[2]=="True"))
+	game.start_custom_game(sys.argv[1])
 
 if __name__ == "__main__":
-	main()
+	test()

@@ -18,7 +18,7 @@ def main():
 	try:
 		s.bind((HOST, PORT))
 	except socket.error as msg:
-		write_to_log('Bind failed. Error code: {!s} Message {!s}'.format(msg[0], msg[1]))
+		write_to_log('Bind failed. Error: {!s}'.format(msg)
 		sys.exit()
 
 	write_to_log('Socket bind complete')

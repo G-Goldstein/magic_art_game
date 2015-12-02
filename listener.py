@@ -10,7 +10,7 @@ def main():
 		write_to_log('Attempting to listen on: {!s}:{!s}'.format(HOST, PORT))
 	except:
 		HOST = ''
-		PORT = 8888
+		PORT = 8080
 
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	write_to_log('Socket created')

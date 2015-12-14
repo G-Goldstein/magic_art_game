@@ -53,7 +53,7 @@ def main(set, outchannel, logging):
 				for spoiler in spoilers:
 					if spoiler not in spoiled:
 						image_url = '{!s}{!s}'.format(spoiler_page(set), spoiler)
-						slack_bot.post_image(image_url, 'New {!s} spoiler'.format(set))
+						slack_bot.post_images([image_url], 'New {!s} spoiler'.format(set))
 						spoiled.append(spoiler)
 						new_spoilers += 1
 				if new_spoilers == 0:
@@ -95,6 +95,7 @@ def run_once(set, outchannel, logging):
 				spoiled.append(spoiler)
 				spoilers_to_post.append(image_url)
 				new_spoilers += 1
+				break
 		if new_spoilers > 0:
 			slack_bot.post_images(spoilers_to_post, 'New {!s} spoiler'.format(set.upper()))
 		else:

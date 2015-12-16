@@ -10,7 +10,8 @@ class slack_bot:
 		self.default_message = {
 		#'channel': channel_name,
 		'username': bot_name,
-		'icon_url': bot_icon
+		'icon_url': bot_icon,
+		'link_names':'1'
 		}
 		self.live = live
 		self.session = requests.session()
@@ -33,6 +34,7 @@ class slack_bot:
 				'image_url': image_url,
 				'pretext': pretext,
 				'fallback': fallback
+				'color': '#764FA5'
 				}
 			else:
 				attachment = {

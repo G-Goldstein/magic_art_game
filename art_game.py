@@ -20,6 +20,8 @@ difficulty_descriptions = {
 	'impossible':'All cards from all sets'
 }
 
+people_to_notify = ['@petestansmith', '@cullen', '@alexlees']
+
 class magic_art_game:
 	def __init__(self, settings_file, difficulty='', live=False):
 		try:
@@ -71,7 +73,9 @@ class magic_art_game:
 		page_url = 'http://magiccards.info/{!s}/en/{!s}.html'.format(edition, number)
 		return page_url
 
-	
+	def notify_people(self):
+		notification = ', '.join(people_to_notify)
+		self.magic_bot.post_message('Notifying {!s}'.format(notification))
 
 	def play_a_round(self):
 		image_url = self.random_magic_card()
@@ -97,6 +101,7 @@ class magic_art_game:
 			channel = 'channel'
 		self.magic_bot.post_message('Starting {!s} {!s} magic art games in this {!s} with {!s} seconds for answers'.format(self.settings['cards_in_game'], self.settings['difficulty'], channel, self.settings['time_for_answers']))
 		self.magic_bot.post_message('{!s}: {!s}'.format(self.settings['difficulty'], difficulty_descriptions[self.settings['difficulty']]))
+		self.notify_people()
 		for x in range(self.settings['cards_in_game']):
 			time.sleep(self.settings['time_between_cards'])
 			while not self.play_a_round():
@@ -109,8 +114,7 @@ class magic_art_game:
 		else:
 			channel = 'channel'
 		self.magic_bot.post_message('Starting up to {!s} custom magic art games in this {!s} with {!s} seconds for answers'.format(self.settings['cards_in_game'], channel, self.settings['time_for_answers']))
-		#self.magic_bot.post_message('Starting up to {!s} impossible magic art games in this {!s} with {!s} seconds for answers'.format(self.settings['cards_in_game'], channel, self.settings['time_for_answers']))
-		#self.magic_bot.post_message('Custom filter: {!s}'.format(filter))
+		self.notify_people()
 		for card in itertools.islice(random_cards_with_art_from_filter(filter), 0, self.settings['cards_in_game']):
 			time.sleep(self.settings['time_between_cards'])
 			self.play_a_round_with_card(card)

@@ -33,7 +33,7 @@ class slack_bot:
 				attachment = {
 				'image_url': image_url,
 				'pretext': pretext,
-				'fallback': fallback
+				'fallback': fallback,
 				'color': '#764FA5'
 				}
 			else:

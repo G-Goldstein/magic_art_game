@@ -57,8 +57,7 @@ docs/_build/
 target/
 
 # Configuration
-magic_art_game.settings
-rpg_code_game.settings
+*.settings
 
 /data
 /log

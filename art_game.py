@@ -43,7 +43,6 @@ class magic_art_game:
 		self._set_difficulty(difficulty)
 		self.magic_bot = slack_bot(self.settings['magic_channel_url'], self.settings['magic_channel_name'], self.settings['magic_bot_name'], self.settings['magic_bot_icon'], live)
 
-
 	def _set_difficulty(self, difficulty):
 		if difficulty.lower() not in valid_difficulties:
 			try:

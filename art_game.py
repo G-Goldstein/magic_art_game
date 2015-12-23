@@ -20,7 +20,7 @@ difficulty_descriptions = {
 	'impossible':'All cards from all sets'
 }
 
-people_to_notify = ['@petestansmith', '@cullen', '@alexlees']
+people_to_notify = ['@petestansmith', '@cullen', '@alexlees', '@nickhancock']
 
 class magic_art_game:
 	def __init__(self, settings_file, difficulty='', live=False):
@@ -74,6 +74,8 @@ class magic_art_game:
 		return page_url
 
 	def notify_people(self):
+		self.magic_bot.post_message('Not notifying anyone because no-one\'s in')
+		return
 		notification = ', '.join(people_to_notify)
 		self.magic_bot.post_message('Notifying {!s}'.format(notification))
 
@@ -129,7 +131,7 @@ def card_set(card):
 	return regex.first_match_in_string(card, '^.*(?=/)')
 
 def card_set_number(card):
-	return regex.first_match_in_string(card, '(?<=/)\d*')
+	return regex.first_match_in_string(card, '(?<=/)\d*[ab]*')
 
 def direct_link_to_card(card):
 	return 'http://magiccards.info/{!s}/en/{!s}.html'.format(card_set(card), card_set_number(card))
@@ -155,7 +157,7 @@ def random_arrangement_of_numbers(numbers):
 	return list_of_numbers
 
 def random_cards_from_filter(filter):
-	filter = 'l:en ({!s})'.format(filter)
+	filter = 'not e:ug/en l:en ({!s})'.format(filter)
 	parsed_filter = urllib.parse.quote_plus(filter)
 	url = 'http://magiccards.info/query?q={!s}&v=card&s=cname'.format(parsed_filter)
 	if regex.page_contains_regex(url, 'Your\squery\sdid\snot\smatch\sany\scards'):
@@ -169,7 +171,7 @@ def random_cards_from_filter(filter):
 		card_page_number = int(number / 20 + 1)
 		card_number_on_page = number % 20 + 1
 		list_url = 'http://magiccards.info/query?q={!s}&s=cname&v=card&p={!s}'.format(parsed_filter, str(card_page_number))
-		cards_on_page = regex.all_matches_from_page(list_url, '(?<=info/scans/en/)[^/]*/\d*')
+		cards_on_page = regex.all_matches_from_page(list_url, '(?<=info/scans/en/)[^/]*/\d*[ab]*')
 		yield cards_on_page[card_number_on_page - 1]
 
 def random_cards_with_art_from_filter(filter):

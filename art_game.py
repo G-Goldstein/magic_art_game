@@ -73,8 +73,6 @@ class magic_art_game:
 		return page_url
 
 	def notify_people(self):
-		self.magic_bot.post_message('Not notifying anyone because no-one\'s in')
-		return
 		notification = ', '.join(people_to_notify)
 		self.magic_bot.post_message('Notifying {!s}'.format(notification))
 

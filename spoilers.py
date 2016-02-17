@@ -113,8 +113,8 @@ def run_once(outchannel, logging):
 			gone_bad = True
 
 if __name__ == "__main__":
-	outchannel = 'console'
-	#outchannel = 'slack'
-	logging = 'console'
-	#logging = 'log'
+	#outchannel = 'console'
+	outchannel = 'slack'
+    #logging = 'console'
+	logging = 'log'
 	run_once(outchannel, logging)

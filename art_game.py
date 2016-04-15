@@ -20,7 +20,7 @@ difficulty_descriptions = {
 	'impossible':'All cards from all sets'
 }
 
-people_to_notify = ['@petestansmith', '@cullen', '@alexlees', '@nickhancock']
+people_to_notify = ['@petestansmith', '@nickhancock']
 
 class magic_art_game:
 	def __init__(self, settings_file, difficulty='', live=False):
@@ -130,8 +130,22 @@ def card_set(card):
 def card_set_number(card):
 	return regex.first_match_in_string(card, '(?<=/)\d*[ab]*')
 
-def direct_link_to_card(card):
+def direct_link_to_card(card, site='gatherer'):
+	if site == 'gatherer':
+		return direct_link_to_card_gatherer(card)
+	return direct_link_to_card_magiccards(card)
+
+def direct_link_to_card_magiccards(card):
 	return 'http://magiccards.info/{!s}/en/{!s}.html'.format(card_set(card), card_set_number(card))
+
+def card_name(image_url):
+	name = re.search('^.*(?=\s\()', card_title(image_url)).group(0)
+	return name
+
+def direct_link_to_card_gatherer(card):
+		name = card_name(card)
+		page_url = 'http://gatherer.wizards.com/Pages/Search/Default.aspx?name=+[{}]'.format(name)
+		return page_url
 
 def art_link_for_card(card):
 	return 'http://magiccards.info/crop/en/{!s}/{!s}.jpg'.format(card_set(card), card_set_number(card))
@@ -144,7 +158,7 @@ def card_has_art(card):
 		return False
 
 def card_title(card):
-	page = urllib.request.urlopen(direct_link_to_card(card))
+	page = urllib.request.urlopen(direct_link_to_card(card, site='magiccards'))
 	title = re.search('(?<=<title>)[^<]*', page.read().decode('utf-8', 'ignore')).group(0)
 	return title
 

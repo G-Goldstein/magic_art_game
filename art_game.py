@@ -20,7 +20,7 @@ difficulty_descriptions = {
 	'impossible':'All cards from all sets'
 }
 
-people_to_notify = ['@petestansmith', '@nickhancock']
+people_to_notify = ['<!channel>']
 
 class magic_art_game:
 	def __init__(self, settings_file, difficulty='', live=False):
@@ -112,12 +112,12 @@ class magic_art_game:
 			channel = '<!channel>'
 		else:
 			channel = 'channel'
-		self.magic_bot.post_message('Starting up to {!s} custom magic art games in this {!s} with {!s} seconds for answers'.format(self.settings['cards_in_game'], channel, self.settings['time_for_answers']))
+		self.magic_bot.post_message('Starting a magic art game in this {} with filter `{}`'.format(channel, filter))
 		self.notify_people()
 		for card in itertools.islice(random_cards_with_art_from_filter(filter), 0, self.settings['cards_in_game']):
 			time.sleep(self.settings['time_between_cards'])
 			self.play_a_round_with_card(card)
-		self.magic_bot.post_message('Thanks for playing! The filter was: `{!s}`'.format(filter))
+		self.magic_bot.post_message('Thanks for playing!')
 
 	def play_a_round_with_card(self, card):
 		self.magic_bot.post_images([art_link_for_card(card)], "Magic Art Game: custom difficulty")
@@ -144,7 +144,8 @@ def card_name(image_url):
 
 def direct_link_to_card_gatherer(card):
 		name = card_name(card)
-		page_url = 'http://gatherer.wizards.com/Pages/Search/Default.aspx?name=+[{}]'.format(name)
+		set_name = card_set_name(card)
+		page_url = 'http://gatherer.wizards.com/Pages/Search/Default.aspx?name=+[{}]&set=["{}"]'.format(name, set_name)
 		return page_url
 
 def art_link_for_card(card):
@@ -162,13 +163,42 @@ def card_title(card):
 	title = re.search('(?<=<title>)[^<]*', page.read().decode('utf-8', 'ignore')).group(0)
 	return title
 
+def card_set_name(card):
+	title = card_title(card)
+	return regex.first_match_in_string(title, '(?<=\().*(?=\))')
+
 def random_arrangement_of_numbers(numbers):
 	list_of_numbers = list(range(numbers))
 	random.shuffle(list_of_numbers)
 	return list_of_numbers
 
+VALID_SETS = [
+'ogw',
+'bfz',
+'dtk',
+'frf',
+'ktk',
+'jou',
+'bng',
+'dgm',
+'gtc',
+'rtr',
+'avr',
+'dka',
+'isd',
+'nph',
+'mbs',
+'som',
+'roe',
+'wwk',
+'zen',
+]
+
+def valid_set_filter():
+	return ' or '.join(map(lambda set: 'e:{}/en'.format(set), VALID_SETS))
+
 def random_cards_from_filter(filter):
-	filter = 'not e:ug/en l:en ({!s})'.format(filter)
+	filter = '({}) ({})'.format(valid_set_filter(), filter)
 	parsed_filter = urllib.parse.quote_plus(filter)
 	url = 'http://magiccards.info/query?q={!s}&v=card&s=cname'.format(parsed_filter)
 	if regex.page_contains_regex(url, 'Your\squery\sdid\snot\smatch\sany\scards'):

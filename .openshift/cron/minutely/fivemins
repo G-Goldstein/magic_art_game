@@ -1,8 +1,6 @@
 #!/bin/bash
 
-# minute=$(date +%M)
-# if [[ $minute =~ [05]$ ]]; then
-#     python -m spoilers
-# fi
-
-python -m spoilers
+minute=$(date +%M)
+if [[ $minute =~ [05]$ ]]; then
+    python -m spoilers
+fi

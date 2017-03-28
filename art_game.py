@@ -105,6 +105,7 @@ class magic_art_game:
 			time.sleep(self.settings['time_between_cards'])
 			while not self.play_a_round():
 				pass
+		time.sleep(2)
 		self.magic_bot.post_message('Thanks for playing!')
 
 	def start_custom_game(self, filter):
@@ -172,33 +173,10 @@ def random_arrangement_of_numbers(numbers):
 	random.shuffle(list_of_numbers)
 	return list_of_numbers
 
-VALID_SETS = [
-'ogw',
-'bfz',
-'dtk',
-'frf',
-'ktk',
-'jou',
-'bng',
-'dgm',
-'gtc',
-'rtr',
-'avr',
-'dka',
-'isd',
-'nph',
-'mbs',
-'som',
-'roe',
-'wwk',
-'zen',
-]
-
 def valid_set_filter():
 	return ' or '.join(map(lambda set: 'e:{}/en'.format(set), VALID_SETS))
 
 def random_cards_from_filter(filter):
-	filter = '({}) ({})'.format(valid_set_filter(), filter)
 	parsed_filter = urllib.parse.quote_plus(filter)
 	url = 'http://magiccards.info/query?q={!s}&v=card&s=cname'.format(parsed_filter)
 	if regex.page_contains_regex(url, 'Your\squery\sdid\snot\smatch\sany\scards'):
@@ -216,6 +194,7 @@ def random_cards_from_filter(filter):
 		yield cards_on_page[card_number_on_page - 1]
 
 def random_cards_with_art_from_filter(filter):
+	filter += ' l:en'
 	fails_in_a_row = 0
 	for card in random_cards_from_filter(filter):
 		if card_has_art(card):
@@ -227,6 +206,7 @@ def random_cards_with_art_from_filter(filter):
 				raise StopIteration
 
 def card_title_with_link(card):
+	return '[[!{}]]'.format(card_name(card))
 	return '<{!s}|{!s}>'.format(direct_link_to_card(card), card_title(card))
 
 def main():

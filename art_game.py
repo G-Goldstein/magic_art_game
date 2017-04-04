@@ -105,7 +105,7 @@ class magic_art_game:
 			time.sleep(self.settings['time_between_cards'])
 			while not self.play_a_round():
 				pass
-		time.sleep(2)
+		time.sleep(5)
 		self.magic_bot.post_message('Thanks for playing!')
 
 	def start_custom_game(self, filter):

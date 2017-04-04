@@ -7,6 +7,7 @@ import post
 
 def get_new_spoilers():
 	matches = regex.all_matches_from_page(new_spoiler_page(), '[a-zA-Z0-9_]*(?<!ogw|c15|bfz)/cards/[^.]*\.jpg')
+	matches.reverse()
 	return matches
 
 def new_spoiler_page():

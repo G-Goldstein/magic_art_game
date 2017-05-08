@@ -72,41 +72,12 @@ class magic_art_game:
 		page_url = 'http://magiccards.info/{!s}/en/{!s}.html'.format(edition, number)
 		return page_url
 
+	def card_full_art_url(self, image_url):
+		return image_url.replace('crop','scans')
+
 	def notify_people(self):
 		notification = ', '.join(people_to_notify)
 		self.magic_bot.post_message('Notifying {!s}'.format(notification))
-
-	def play_a_round(self):
-		image_url = self.random_magic_card()
-		if not self.is_this_an_image(image_url):
-			print('magiccards.info gave me a bad image. Skipping...')
-			return False
-		try:
-			card_title = self.get_card_title(image_url)
-			card_page_url = self.get_card_page_url(image_url)
-			title_with_link = '<{!s}|{!s}>'.format(card_page_url, card_title)
-		except:
-			print('magiccards.info gave me a bad image. Skipping...')
-			return False
-		self.magic_bot.post_images([image_url], "Magic Art Game: {!s} difficulty".format(self.settings['difficulty']))
-		time.sleep(self.settings['time_for_answers'])
-		self.magic_bot.post_message(title_with_link)
-		return True
-
-	def start_the_game(self):
-		if self.settings['alert'] == "True":
-			channel = '<!channel>'
-		else:
-			channel = 'channel'
-		self.magic_bot.post_message('Starting {!s} {!s} magic art games in this {!s} with {!s} seconds for answers'.format(self.settings['cards_in_game'], self.settings['difficulty'], channel, self.settings['time_for_answers']))
-		self.magic_bot.post_message('{!s}: {!s}'.format(self.settings['difficulty'], difficulty_descriptions[self.settings['difficulty']]))
-		self.notify_people()
-		for x in range(self.settings['cards_in_game']):
-			time.sleep(self.settings['time_between_cards'])
-			while not self.play_a_round():
-				pass
-		time.sleep(5)
-		self.magic_bot.post_message('Thanks for playing!')
 
 	def start_custom_game(self, filter):
 		if self.settings['alert'] == "True":
@@ -121,9 +92,9 @@ class magic_art_game:
 		self.magic_bot.post_message('Thanks for playing!')
 
 	def play_a_round_with_card(self, card):
-		self.magic_bot.post_images([art_link_for_card(card)], "Magic Art Game: custom difficulty")
+		self.magic_bot.post_images([art_link_for_card(card)])
 		time.sleep(self.settings['time_for_answers'])
-		self.magic_bot.post_message(card_title_with_link(card))
+		self.magic_bot.post_images([full_image_link_for_card(card)])
 
 def card_set(card):
 	return regex.first_match_in_string(card, '^.*(?=/)')
@@ -151,6 +122,9 @@ def direct_link_to_card_gatherer(card):
 
 def art_link_for_card(card):
 	return 'http://magiccards.info/crop/en/{!s}/{!s}.jpg'.format(card_set(card), card_set_number(card))
+
+def full_image_link_for_card(card):
+	return 'http://magiccards.info/scans/en/{!s}/{!s}.jpg'.format(card_set(card), card_set_number(card))
 
 def card_has_art(card):
 	try:

@@ -58,7 +58,7 @@ def main(set, outchannel, logging):
 					if spoiler not in spoiled:
 						image_url = '{!s}{!s}'.format(spoiler_page(set), spoiler)
 						page_url = image_url.replace('jpg', 'html')
-						slack_bot.post_images([image_url], 'New {!s} spoiler {!s}'.format(set, page_url))
+						slack_bot.post_images([image_url], '<{!s}|New {!s} spoiler>'.format(page_url, set))
 						spoiled.append(spoiler)
 						new_spoilers += 1
 				if new_spoilers == 0:

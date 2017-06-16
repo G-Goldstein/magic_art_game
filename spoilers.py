@@ -98,13 +98,14 @@ def run_once(outchannel, logging):
 		for spoiler in spoilers:
 			if spoiler not in spoiled:
 				image_url = 'http://mythicspoiler.com/{!s}'.format(spoiler)
+				page_url = image_url.replace('jpg', 'html')
 				spoiled.append(spoiler)
 				spoilers_to_post.append(image_url)
 				set = spoiler.split('/')[0]
 				new_spoilers += 1
 				break
 		if new_spoilers > 0:
-			slack_bot.post_images(spoilers_to_post, 'New {!s} spoiler'.format(set.upper()))
+			slack_bot.post_images(spoilers_to_post, '<{!s}|New {!s} spoiler>'.format(page_url, set.upper()))
 		else:
 			post.write_to_log('No new spoilers right now', logging=="log")
 		try: 

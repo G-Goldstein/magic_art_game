@@ -22,10 +22,12 @@ class slack_bot:
 		payload = {'payload':json.dumps(message)}
 		self._send_or_simulate(payload, 'simulating post of message: {!s}'.format(message_text))
 
-	def post_images(self, image_urls_array, pretext="", fallback="Couldn't display image"):
+	def post_images(self, image_urls_array, pretext="", fallback="Couldn't display image", override_channel=None):
 		if len(image_urls_array) == 0:
 			return
 		message = self.default_message.copy()
+		if override_channel is not None:
+			message['channel'] = override_channel
 		message['attachments'] = []
 		attachment_count = 0
 		for image_url in image_urls_array:

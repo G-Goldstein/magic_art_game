@@ -1,5 +1,6 @@
 import urllib.request
 import urllib.parse
+import requests
 import re
 import json
 import time
@@ -23,25 +24,25 @@ class rpg_code_game:
 		return matches.group(0)
 
 	def rpg_program_count(self):
-		request_url = 'http://opengrok.jhc.co.uk/source/search?q=*&defs=&refs=&path=BAS%2FQRPGLESRC%2F&hist=&type=&project=backoffice-F63'
-		page = urllib.request.urlopen(request_url)
-		matches = re.search('(?<=<b>)\d*(?=</b>)', str(page.read()))
+		request_url = 'http://opengrok.jhc.co.uk/source/search?group=BackOffice+f63&full=*&defs=&refs=&path=BAS%2FQRPGLESRC%2F&hist=&type=&si=full'
+		response = requests.get(request_url)
+		matches = re.search('(?<=<b>)\d*(?=</b>)', response.text)
 		return int(matches.group(0))
 
 	def random_rpg_program(self):
 		program_number = random.randint(0, self.rpg_program_count()-1)
-		request_url = 'http://opengrok.jhc.co.uk/source/s?n=25&start={!s}&sort=relevancy&q=*&path=BAS%2FQRPGLESRC%2F&project=backoffice-F63'.format(program_number)
-		page = urllib.request.urlopen(request_url)
-		matches = re.search('(?<=>)[^\s]*\.(RPGLE|SQLRPGLE)', str(page.read()))
+		request_url = f'http://opengrok.jhc.co.uk/source/s?n=25&start={program_number}&sort=relevancy&q=*&path=BAS%2FQRPGLESRC%2F&group=BackOffice+f63&full'
+		response = requests.get(request_url)
+		matches = re.search('(?<=>)[^\s]*\.(RPGLE|SQLRPGLE)', response.text)
 		return matches.group(0)
 
 	def page_source_for_program(self, program):
 		request_url = self.program_source_url(program)
-		page = urllib.request.urlopen(request_url)
-		return page.read().decode('utf-8', 'ignore')
+		response = requests.get(request_url)
+		return response.text
 
 	def program_source_url(self, program):
-		return 'http://opengrok.jhc.co.uk/source/xref/backoffice-F63/BAS/QRPGLESRC/{!s}'.format(urllib.parse.quote_plus(program))
+		return 'http://opengrok.jhc.co.uk/source/xref/bitbucket-backoffice-f63/BAS/QRPGLESRC/{!s}'.format(urllib.parse.quote_plus(program))
 
 	def program_lines(self, program):
 		lines = re.findall('(?<!F63</a>)(?<=\d</a>)(?!<)[^<]*',self.page_source_for_program(program))
@@ -67,7 +68,8 @@ class rpg_code_game:
 			if program[0] == '@':
 				print('Got after program {!s}. Retrying...'.format(program))
 				return False
-		except:
+		except Exception as e:
+			print(e)
 			print('Failed to get a random program. Retrying...')
 			return False
 		try:

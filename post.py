@@ -10,7 +10,7 @@ class slack_bot:
 		self.default_message = {
 		'channel': channel_name,
 		'username': bot_name,
-		'icon_url': bot_icon,
+		'icon_emoji': bot_icon,
 		'link_names':'1'
 		}
 		self.live = live
